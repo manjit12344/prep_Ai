@@ -5,5 +5,5 @@ import { verifyRef,verifyAcc } from "../middlewares/authentication.js";
 const router = express.Router();
 
 
-router.post("/",resum.myResume);
+router.post("/",verifyRef,verifyAcc,resum.myResume);
 export default router;
