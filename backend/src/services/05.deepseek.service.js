@@ -1,4 +1,11 @@
-export async function main(url) {
+  import config, { prisma } from "../config/config.js"
+  import { OpenRouter } from "@openrouter/sdk";
+
+  const openrouter = new OpenRouter({
+    apiKey: config.openrouter_api_key
+  });
+
+  export async function main(url) {
     // Stream the response to get reasoning tokens in usage
     const check= url.toLowerCase().split(".");
     let isPdf = false
