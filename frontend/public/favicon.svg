@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 128 128">
+
+    <!-- Background -->
+    <circle cx="64" cy="64" r="60" fill="#000"/>
+
+    <!-- Centered logo -->
+    <g transform="translate(24 20) scale(0.67)">
+
+        <!-- White P -->
+        <path fill="#fff"
+              d="M28 8h44c30 0 48 18 48 46s-18 46-48 46H52L28 124V8z"/>
+
+        <!-- Inner cutout -->
+        <path fill="#000"
+              d="M52 32v44h20c13 0 22-9 22-22s-9-22-22-22H52z"/>
+
+        <!-- Tail -->
+        <path fill="#000"
+              d="M52 76l-12 12V76z"/>
+
+    </g>
+
+</svg>

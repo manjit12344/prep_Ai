@@ -1,0 +1,88 @@
+import React, { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
+import { userAuth } from "../store/01.auth.store";
+import { userChat } from "../store/02.chat.store";
+import { useHistory } from "../store/03.history";
+import { buildChatMessages } from "../utils/buildChatMessages";
+import UnauthorizedNotice from "../components/chatSession/UnauthorizedNotice";
+import SessionHeader from "../components/chatSession/SessionHeader";
+import MessageList from "../components/chatSession/MessageList";
+import ChatInputArea from "../components/chatSession/ChatInputArea";
+
+const ChatSession = () => {
+  const { know, knowMe } = userAuth();
+  const { aiResponse, running, loading } = userChat();
+  const { chat, myChatHistory } = useHistory();
+
+  const { id } = useParams();
+  const nId = Number(id);
+
+  const [answer, setAnswer] = useState("");
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      await knowMe();
+    };
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    if (nId) {
+      myChatHistory(nId);
+    }
+  }, [nId]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat, aiResponse, loading]);
+
+  const send = async () => {
+    if (!answer.trim() || loading) return;
+
+    const currentQId = chat?.[chat.length - 1]?.id || null;
+    const text = answer;
+    setAnswer("");
+
+    try {
+      await running(nId, currentQId, text);
+      await myChatHistory(nId);
+    } catch (err) {
+      console.error("Failed to send message:", err);
+    }
+  };
+
+  const onKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  };
+
+  if (!know?.user) {
+    return <UnauthorizedNotice />;
+  }
+
+  const isComplete = aiResponse?.aiChat?.isInterviewComplete;
+  const { messages, hasStarted } = buildChatMessages(chat, aiResponse, isComplete);
+
+  return (
+    <div>
+      <SessionHeader sessionId={nId} isComplete={isComplete} loading={loading} />
+
+      <MessageList ref={bottomRef} messages={messages} loading={loading} />
+
+      <ChatInputArea
+        isComplete={isComplete}
+        answer={answer}
+        setAnswer={setAnswer}
+        onKeyDown={onKeyDown}
+        onSend={send}
+        loading={loading}
+        hasStarted={hasStarted}
+      />
+    </div>
+  );
+};
+
+export default ChatSession;
