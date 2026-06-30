@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
-const base_url = import.meta.env.MODE === "development" ? "http://localhost:3000" :""
+const base_url = import.meta.env.MODE === "development" ? "http://localhost:3000" :"https://prepai-production-89e8.up.railway.app"
 const useResumeStore = create((set) => ({
     resumeUrl: "",
     review: null, // Initialized as null since it will hold a structured object now

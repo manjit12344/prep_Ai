@@ -46,7 +46,7 @@ async function analysis(payload) {
     });
     console.log(stream.choices[0]?.message?.content);
 
-    return stream.choices[0]?.message?.content;
+   return stream.choices[0]?.message?.content;
 }
 
 export async function owlAlphaPayload(interviewId, userId) {

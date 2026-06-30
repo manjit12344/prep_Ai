@@ -7,7 +7,7 @@ passport.use(
     new GoogleStrategy({
         clientID: config.client_id,
         clientSecret: config.client_secret,
-        callbackURL:"https://prep-ai-aztu.onrender.com/auth/google/callback",
+        callbackURL:"https://prepai-production-89e8.up.railway.app/auth/google/callback",
         proxy: true
     },
         async (accessToken, refreshToken, profile, done) => {

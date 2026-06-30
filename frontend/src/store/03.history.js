@@ -3,7 +3,7 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-const base_url = import.meta.env.MODE === "development" ? "http://localhost:3000" :""
+const base_url = import.meta.env.MODE === "development" ? "http://localhost:3000" :"https://prepai-production-89e8.up.railway.app"
 export const useHistory = create((set, get) => ({
     chat: [],
     interview: [],
