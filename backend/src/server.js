@@ -37,7 +37,7 @@ app.use("/resume",resume);
 if(process.env.NODE_ENV==="production"){
   //serve our react app
   app.use(express.static(path.join(__dirname,"/frontend/dist")));
-  app.get((req,res)=>{
+  app.use((req,res)=>{
     res.sendFile(path.resolve(__dirname,"frontend","dist","index.html"));
   })
 }
