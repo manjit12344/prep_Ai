@@ -50,48 +50,46 @@ async function analysis(payload) {
 }
 
 export async function owlAlphaPayload(interviewId, userId) {
-    const data = await prisma.interviewResponse.findMany({
-        where: {
-            interviewId
-        }, orderBy: {
-            id: "asc"
-        }, select: {
-            question: true,
-            answer: true,
-            score: true,
-        }
-    })
-    let payload = [];
-    data.forEach(e => {
-        let obj = {
-            question: e.question
-            , answer: e.answer
-            , score: e.score
-        }
-        payload.push(obj);
-    })
-
-
-    let response = await analysis(payload)
-
-    let cleaner = response.replace(/^```json\s*/i, "")
-        .replace(/^```\s*/i, "")
-        // 2. Remove trailing markdown fences
-        .replace(/\s*```$/, "")
-        // 3. Trim edge whitespaces and replace tricky escaped linebreaks
-        .trim();
-
-    let viewSome = JSON.parse(cleaner);
-
     try {
         const data = await prisma.interviewResult.findFirst({
-            where: {
-                interviewId,
-                userId
-            }
-        })
+            where: { interviewId, userId }
+        });
         if (data) return data;
-        await prisma.interviewResult.create({
+
+        const dbRows = await prisma.interviewResponse.findMany({
+            where: { interviewId },
+            orderBy: { id: "asc" },
+            select: { question: true, answer: true, score: true },
+        });
+
+        const payload = dbRows.map(e => ({
+            question: e.question,
+            answer: e.answer,
+            score: e.score
+        }));
+
+        const response = await analysis(payload);
+
+        if (!response) {
+            console.error("AI analysis returned empty response");
+            return null;
+        }
+
+        const cleaner = response
+            .replace(/^```json\s*/i, "")
+            .replace(/^```\s*/i, "")
+            .replace(/\s*```$/, "")
+            .trim();
+
+        let viewSome;
+        try {
+            viewSome = JSON.parse(cleaner);
+        } catch (parseErr) {
+            console.error("Failed to parse AI JSON:", cleaner);
+            return null;
+        }
+
+        const created = await prisma.interviewResult.create({
             data: {
                 interviewId,
                 userId,
@@ -99,19 +97,18 @@ export async function owlAlphaPayload(interviewId, userId) {
                 technicalScore: viewSome.technicalScore,
                 communicationScore: viewSome.communicationScore,
                 speedScore: viewSome.speedScore,
-
                 weakness: viewSome.weakness,
                 strength: viewSome.strength,
                 feedback: viewSome.feedback,
-
             }
-        })
-        return viewSome;
+        });
+
+        return created;
     } catch (error) {
-        console.log(error);
+        console.error("owlAlphaPayload error:", error);
+        return null;
     }
 }
-
 export async function analytics(interviewId, userId) {
     const data = await prisma.interviewResult.findFirst({
         where: {

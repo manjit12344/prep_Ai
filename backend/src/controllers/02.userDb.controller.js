@@ -72,7 +72,7 @@ export async function interviewResponse(req, res) {
             })
           analysis = await owlAlphaPayload(nId,req.user.id);
         }
-        console.log("HELLO******SEEHERE:",analysis);
+        console.log("HELLO******SEE HERE:",analysis);
         return res.json({
             interviewId: nId,
             qId: store,
