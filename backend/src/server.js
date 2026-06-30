@@ -20,6 +20,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
+      "https://prep-ai-aztu.onrender.com"
     ],
     credentials: true,
   })

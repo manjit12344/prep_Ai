@@ -39,7 +39,7 @@ export async function callBack(req, res) {
 
     res.cookie("accessToken", accessToken,myCookieAcc);
     
-    res.redirect("http://localhost:5173/features")
+    res.redirect("https://prep-ai-aztu.onrender.com/features")
 }
 
 // brotha veri importaant 
