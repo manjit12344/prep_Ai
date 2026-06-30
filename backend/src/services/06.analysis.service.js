@@ -8,7 +8,7 @@ const openrouter = new OpenRouter({
 async function analysis(payload) {
     const stream = await openrouter.chat.send({
         chatRequest: {
-            model: "openrouter/free",
+            model: "google/gemma-4-31b-instruct:free",
             response_format: { type: "json_object" },
             stream: false,
 
