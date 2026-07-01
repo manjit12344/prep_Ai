@@ -8,7 +8,7 @@ const openrouter = new OpenRouter({
 async function analysis(payload) {
     const stream = await openrouter.chat.send({
         chatRequest: {
-            model: "qwen/qwen3-next-80b-a3b-instruct:free",
+            model: "qwen/qwen3-coder:free",
             response_format: { type: "json_object" },
             stream: false,
 
@@ -23,15 +23,15 @@ async function analysis(payload) {
                Return ONLY valid JSON.
 
                 {
-                 "averageScore": number,
-                 "technicalScore": number,
-                 "communicationScore": number,
-                 "speedScore": number,
-                 "weakness": string,
-                 "strength": string,
-                 "feedback": string,
+                 "averageScore": 88,
+                 "technicalScore": 50,
+                 "communicationScore": 60,
+                 "speedScore": 70,
+                 "weakness": "Needs improvement in...",
+                 "strength": "Strong problem solving...",
+                 "feedback": "Overall...",
                } 
-                 give these scores out of 100
+                 give these scores out of 100 and in integer.
                  following is the text
         `
                         },
