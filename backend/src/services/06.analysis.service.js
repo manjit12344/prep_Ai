@@ -8,7 +8,7 @@ const openrouter = new OpenRouter({
 async function analysis(payload) {
     const stream = await openrouter.chat.send({
         chatRequest: {
-            model: "qwen/qwen3-32b:free",
+            model: "qwen/qwen3-next-80b-a3b-instruct:free",
             response_format: { type: "json_object" },
             stream: false,
 
