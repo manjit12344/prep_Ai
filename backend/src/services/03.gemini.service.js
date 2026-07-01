@@ -104,8 +104,8 @@ OUTPUT RULES (STRICT JSON)
 ROLE PLAY
 ========================
 
-Act like a senior technical interviewer from {company}
-Hiring for {type} role at {level} level.
+Act like a senior technical interviewer from ${company}
+Hiring for ${type} role at ${level} level.
 
 Be strict, structured, and consistent.
 `,
