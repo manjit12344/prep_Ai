@@ -6,7 +6,8 @@ const openrouter = new OpenRouter({
 });
 
 async function analysis(payload) {
-    const stream = await openrouter.chat.send({
+  try{
+      const stream = await openrouter.chat.send({
         chatRequest: {
             model: "qwen/qwen3-coder:free",
             response_format: { type: "json_object" },
@@ -47,6 +48,28 @@ async function analysis(payload) {
     console.log(stream.choices[0]?.message?.content);
 
    return stream.choices[0]?.message?.content;
+  }catch(error){
+    ```json
+
+{
+
+  "averageScore": 0,
+
+  "technicalScore": 0,
+
+  "communicationScore": 0,
+
+  "speedScore": 0,
+
+  "weakness": null,
+
+  "strength": null,
+
+  "feedback": ${error}
+}
+
+```
+  }
 }
 
 export async function owlAlphaPayload(interviewId, userId) {
