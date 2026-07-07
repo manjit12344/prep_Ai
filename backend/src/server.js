@@ -21,6 +21,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:3000",
+      "https://prepai-production-36c8.up.railway.app",
     ],
     credentials: true,
   })
