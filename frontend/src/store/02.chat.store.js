@@ -5,7 +5,7 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-const base_url = import.meta.env.MODE === "development" ? "http://localhost:3000" :""
+const base_url = import.meta.env.MODE === "development" ? "http://localhost:3000" :"https://prepai-production-36c8.up.railway.app"
 
 export const userChat = create((set, get) => ({
     preReq: {},

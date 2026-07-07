@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import config, { prisma,myCookieAcc,myCookieRef } from "../config/config.js"
 
-const base_url = config.nodeEnv === "production"?"https://prepai-production-36c8.up.railway.app":"http://localhost:5173"
+const base_url = config.nodeEnv === "production"?"https://prepai-production-36c8.up.railway.app":"http://localhost:3000"
 
 export async function callBack(req, res) {
     const user = req.user;
