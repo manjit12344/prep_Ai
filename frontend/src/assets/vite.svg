@@ -1,0 +1,43 @@
+<svg width="512" height="180" viewBox="0 0 512 180" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .black { fill: #000; }
+      .white { fill: #fff; }
+      .text {
+        font-family: Inter, Poppins, Arial, sans-serif;
+        font-size: 72px;
+        font-weight: 700;
+      }
+    </style>
+  </defs>
+
+  <!-- Logo Icon -->
+  <g transform="translate(20,20)">
+    <!-- P Shape -->
+    <path class="black"
+      d="
+      M40 0
+      H90
+      C125 0 150 25 150 60
+      C150 95 125 120 90 120
+      H60
+      V160
+      L20 160
+      V20
+      C20 8 28 0 40 0
+      Z"/>
+
+    <!-- AI Face -->
+    <rect x="45" y="30" rx="22" ry="22"
+          width="75" height="55"
+          class="white"/>
+
+    <circle cx="68" cy="58" r="6" class="black"/>
+    <circle cx="98" cy="58" r="6" class="black"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="190" y="110" class="text" fill="#000">
+    prep<tspan font-weight="900">A</tspan>i
+  </text>
+</svg>

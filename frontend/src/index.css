@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Warm premium white */
+  --background: #fafaf9;
+
+  /* Rich charcoal */
+  --text: #111827;
+
+  /* Cleaner borders */
+  --border: #e5e7eb;
+
+  /* Elevated cards */
+  --card: #ffffff;
+}
+
+.dark {
+  /* Slightly softer than pure black */
+  --background: #0f1117;
+
+  /* Comfortable white */
+  --text: #f8fafc;
+
+  /* Cleaner dark borders */
+  --border: #23262d;
+
+  /* Elevated dark cards */
+  --card: #161a22;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.bg-canvas {
+  background-color: var(--background);
+}
+
+.text-main {
+  color: var(--text);
+}
+
+.border-line {
+  border-color: var(--border);
+}
+
+.bg-card {
+  background-color: var(--card);
+}
+
+.text-muted {
+  color: color-mix(
+    in srgb,
+    var(--text) 62%,
+    transparent
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Warm premium white */
+  --background: #fafaf9;
+
+  /* Rich charcoal */
+  --text: #111827;
+
+  /* Cleaner borders */
+  --border: #e5e7eb;
+
+  /* Elevated cards */
+  --card: #ffffff;
+
+  /* NEW: true black "ink" accent — the one signature tone for this theme */
+  --ink: #0a0a0a;
+}
+
+.dark {
+  /* Slightly softer than pure black */
+  --background: #0f1117;
+
+  /* Comfortable white */
+  --text: #f8fafc;
+
+  /* Cleaner dark borders */
+  --border: #23262d;
+
+  /* Elevated dark cards */
+  --card: #161a22;
+
+  /* NEW: ink flips to near-white in dark mode — pure black would vanish
+     against a near-black background, so this keeps it the highest-contrast
+     tone in either theme. Swap to a fixed #0a0a0a here instead if you want
+     it to stay literally black even in dark mode. */
+  --ink: #f5f5f5;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.bg-canvas {
+  background-color: var(--background);
+}
+
+.text-main {
+  color: var(--text);
+}
+
+.border-line {
+  border-color: var(--border);
+}
+
+.bg-card {
+  background-color: var(--card);
+}
+
+.text-muted {
+  color: color-mix(
+    in srgb,
+    var(--text) 62%,
+    transparent
+  );
+}
+
+/* NEW: ink utilities, same naming pattern as the rest of the theme */
+.bg-ink {
+  background-color: var(--ink);
+}
+
+.text-ink {
+  color: var(--ink);
+}
+
+.border-ink {
+  border-color: var(--ink);
+}
+.text-on-ink {
+  color: var(--background);
+}

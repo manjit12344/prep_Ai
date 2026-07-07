@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              Int               @id @default(autoincrement())
+  googleId        String            @unique
+  name            String
+  email           String            @unique
+  profile         String?           
+  createdAt       DateTime          @default(now())
+  refreshToken    String?          
+  interviews      Interview[]       
+  interviewResults InterviewResult[] 
+  resumes          Resume[]
+}
+
+model Interview {
+  id                 Int                 @id @default(autoincrement())
+  userId             Int
+  type               String             
+  level              String           
+  company            String?             
+  status             String              @default("going") 
+  createdAt          DateTime            @default(now())
+  
+  // Relations
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interviewResponses InterviewResponse[] // One-to-Many: An interview holds multiple questions
+  interviewResult    InterviewResult?    // One-to-One: An interview has exactly one final summary verdict
+}
+
+model InterviewResponse {
+  id          Int       @id @default(autoincrement())
+  interviewId Int
+  question    String
+  answer      String?   
+  score       Int       @default(0)
+  target      String?
+  topic       String?
+
+  // Relations
+  interview   Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+}
+
+model InterviewResult {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  interviewId Int       @unique 
+
+  averageScore         Int      @default(0)
+  technicalScore       Int      @default(0)
+  communicationScore   Int      @default(0)
+  speedScore           Int      @default(0)
+
+  weakness    String?
+  strength    String?
+  feedback    String?
+
+  createdAt    DateTime @default(now())   
+
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interview   Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+}
+
+
+model Resume {
+  id        Int      @id @default(autoincrement())
+
+  fileUrl   String
+  createdAt DateTime @default(now())
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
