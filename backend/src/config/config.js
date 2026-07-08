@@ -12,14 +12,14 @@ export const prisma = new PrismaClient({
 
 export const myCookieAcc = {
   httpOnly: true,
-  secure: true,
-  sameSite: "none",
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
   maxAge: 1000*60*15
 };
 export const myCookieRef = {
   httpOnly: true,
-  secure: true,
-  sameSite: "none",
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
   maxAge: 1000*60*60*24*7
 
 }
