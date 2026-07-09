@@ -3,7 +3,7 @@ import { userAuth } from "../store/01.auth.store";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const base_url = "http://localhost:3000"  //import.meta.env.MODE === "development" ? "http://localhost:3000" :"https://prepai-production-36c8.up.railway.app"
+  const base_url = import.meta.env.MODE === "development" ? "http://localhost:3000" :"https://prepai-production-36c8.up.railway.app"
   const { know, knowMe, logOut } = userAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
