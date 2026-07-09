@@ -15,7 +15,12 @@ let chat = [
     process.env.key8,
     process.env.key9,
     process.env.key10,
-]
+    process.env.key11,
+    process.env.key12,
+    process.env.key13,
+    process.env.key14,
+    process.env.key15
+].filter(Boolean);
 
 let n = chat.length;
 let i = 0;
