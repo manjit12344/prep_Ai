@@ -37,12 +37,7 @@ export async function handelFirst(id,aiChat){
 export async function findFromDb(id){
     const response =  await prisma.interviewResponse.findMany({
         where:{interviewId:id,
-            OR:[{question:{
-              not:null
-            }},
-            {answer:{
-              not:null
-            }}]
+            question:{not:null}
         },
         orderBy:{
             id:'asc'
@@ -77,6 +72,7 @@ export async function storeInDb(qId,id,aiChat,userResponse){
                 score:aiChat.score,
                 answer:userResponse
             }
+
         })
         const response2 = await prisma.interviewResponse.create({  //setting up newQuestion
             data:{
