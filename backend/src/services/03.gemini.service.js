@@ -175,7 +175,7 @@ export async function runNow(id,history, userResponse, type, level, company) {
       topic:null,
       target:null,
       nextQuestion: null,
-      isInterviewComplete: true
+      isInterviewComplete: false
     }
   }
 }

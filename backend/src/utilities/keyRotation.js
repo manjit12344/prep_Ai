@@ -44,12 +44,12 @@ export function rotate(){
 }
 
 export function rotate2(){
-   const ai = new GoogleGenAI({ apiKey: resume[j%n] });
+   const ai = new GoogleGenAI({ apiKey: resume[j%x] });
    j++;
    return ai;
 }
 export function rotate3(){
-   const ai = new GoogleGenAI({ apiKey: analysis[k%n] });
+   const ai = new GoogleGenAI({ apiKey: analysis[k%y] });
    k++;
    return ai;
 }
