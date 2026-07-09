@@ -16,7 +16,7 @@ function aiConfig(history, userResponse, type, level, company, payload) {
 Rules:
 - Ask practical interview questions, not textbook definitions.
 - Be conversational; avoid repeating praise.
-- Evaluate the candidate answer and score 1-10.
+- Evaluate the candidate answer and score 1-10 on basis of response.
 - Strong answers should usually get deeper follow-ups about trade-offs, edge cases, scalability, or "why" decisions.
 - Weak answers should get clarifying follow-ups.
 - Do not repeat completed MAIN topics:
@@ -25,6 +25,10 @@ ${JSON.stringify(payload.topics)}
 State:
 Main completed: ${payload.mainQuestions}/5
 Followups completed: ${payload.followupQuestions}
+As per interview session like ${level}-level ${type} interviewer for ${company} end interview on right number of questions have asked :
+ total main asked:${payload.mainQuestions}/5
+ total followup asked:${payload.followupQuestions}
+
 
 Choose:
 - target="followup" when the current topic needs more exploration.
@@ -132,8 +136,8 @@ export async function first(id, history, preDefined, type, level, company) {
     return JSON.parse(response.text);
   }
   catch (err) {
-    console.error("first() failed — Gemini call or JSON parse error:", err);
-    throw err; // don't hide it, let the controller's catch report a proper error
+    console.error("first() Gemini call or JSON parse error:", err);
+    throw err; 
   }
 }
 
