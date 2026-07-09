@@ -1,8 +1,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import config, { prisma } from "../config/config.js";
 import { PDFParse } from 'pdf-parse';
+import { rotate2 } from "../utilities/keyRotation.js"
 
-const ai = new GoogleGenAI({ apiKey: config.resume_ats });
+
 
 
 const gemini_response = {
@@ -77,7 +78,7 @@ export async function main(url) {
 
 
 
-  const chat = ai.chats.create(aiConfig());
+  const chat = rotate2().chats.create(aiConfig());
   try {
     let sendMsg = await chat.sendMessage({ message: `this is my resume content: ${JSON.stringify(content)}` });
     console.log(sendMsg.text);

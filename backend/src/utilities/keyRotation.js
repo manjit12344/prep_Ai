@@ -15,6 +15,9 @@ let chat = [
     process.env.key8,
     process.env.key9,
     process.env.key10,
+].filter(Boolean);
+
+let resume = [
     process.env.key11,
     process.env.key12,
     process.env.key13,
@@ -22,11 +25,32 @@ let chat = [
     process.env.key15
 ].filter(Boolean);
 
+let analysis = [
+    process.env.key16,
+    process.env.key17,
+    process.env.key18,
+    process.env.key19,
+    process.env.key20
+].filter(Boolean);
 let n = chat.length;
-let i = 0;
+let x = resume.length;
+let y = analysis.length;
+let i = 0,j=0,k=0;
 
 export function rotate(){
    const ai = new GoogleGenAI({ apiKey: chat[i%n] });
    i++;
    return ai;
 }
+
+export function rotate2(){
+   const ai = new GoogleGenAI({ apiKey: resume[j%n] });
+   j++;
+   return ai;
+}
+export function rotate3(){
+   const ai = new GoogleGenAI({ apiKey: analysis[k%n] });
+   k++;
+   return ai;
+}
+

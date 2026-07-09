@@ -1,26 +1,35 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import config, { prisma } from "../config/config.js";
-import { rotate } from "../utilities/keyRotation.js";
-
-function aiConfig(history, userResponse, type, level, company, payload) {
+import { rotate } from "../utilities/keyRotation.js"
+ 
+function aiConfig(history, type, level, company,payload) {
   return {
     model: "gemini-2.5-flash",
-    contents: [...history,
-    {
-      role: "user",
-      parts: [{ text: userResponse }]
-    }],
+    history: history,
     config: {
-      systemInstruction: `You are a realistic ${level}-level ${type} interviewer for ${company}.
+      systemInstruction: `You are a strict, fair AI technical interviewer. Behave like a deterministic interview engine, not a conversational assistant.
+
+Conduct exactly 5 MAIN technical questions. Follow-up questions do NOT count as main questions.
+
+Infer interview state only from chat history.
+
+Track:
+
+* mainQuestionCount (0–5)
+* followUpMode
+* followUpCount (max 2 per topic)
 
 Rules:
-- Ask practical interview questions, not textbook definitions.
-- Be conversational; avoid repeating praise.
-- Evaluate the candidate answer and score 1-10 on basis of response.
-- Strong answers should usually get deeper follow-ups about trade-offs, edge cases, scalability, or "why" decisions.
-- Weak answers should get clarifying follow-ups.
-- Do not repeat completed MAIN topics:
-${JSON.stringify(payload.topics)}
+
+1. If last score is null or 0, ask the first main question.
+2. If last score is 4–6 and followUpCount < 2:
+
+   * Stay on the current topic.
+   * Ask an easier follow-up testing fundamentals only.
+   * Do not introduce a new topic.
+3. If last score is 7–10, move to the next main topic.
+4. If last score is 0–3, move to the next main topic.
+5. After 2 follow-ups on a topic, always move to the next main topic.
 
 State:
 Main completed: ${payload.mainQuestions}/5
@@ -29,21 +38,43 @@ As per interview session like ${level}-level ${type} interviewer for ${company} 
  total main asked:${payload.mainQuestions}/5
  total followup asked:${payload.followupQuestions}
 
+Main questions must:
 
-Choose:
-- target="followup" when the current topic needs more exploration.
-- target="main" when moving to a new topic.
+* Cover distinct technical topics.
+* Increase in depth gradually.
+* Match role: ${type}
+* Match level: ${level}
+* Reflect ${company}'s interview style.
 
-End naturally after the interview is complete.
+Follow-up questions must:
 
-Return JSON only.`,
+* Stay within the same concept.
+* Never introduce a new topic.
+* like the formate of previous with why how if 
 
+When all 5 main questions are completed:
+
+* Set isInterviewComplete = true.
+* Return a short professional closing message.
+
+Respond ONLY with valid JSON:
+{
+"nextQuestion": "...",
+"isInterviewComplete": boolean
+}
+
+Never output markdown, explanations, or extra text.
+
+      
+     
+      `,
+ 
       responseMimeType: "application/json",
       responseSchema: gemini_response,
     }
   };
 }
-
+ 
 // Defining the schema format
 const gemini_response = {
   type: Type.OBJECT,
@@ -56,13 +87,13 @@ const gemini_response = {
       type: Type.STRING,
       description: "A brief 1-sentence note detailing what sub-topic needs tracking based on their weak score. Keep this short."
     },
-    topic: {
+    topic:{
       type: Type.STRING,
-      description: "just a topic asked in the next question",
+      description:"just a topic asked in the next question",
     },
-    target: {
+    target:{
       type: Type.STRING,
-      description: "tell if the next question is main or followup. return only 'main' or 'followup' "
+      description:"tell if the next question is main or followup. return only 'main' or 'followup' "
     },
     nextQuestion: {
       type: Type.STRING,
@@ -73,7 +104,7 @@ const gemini_response = {
       description: "Set to true ONLY after 5 MAJOR technical topic questions have been fully answered. Ignore simpler follow-up questions when counting."
     }
   },
-  required: ["score", "followup", "nextQuestion", "topic", "target", "isInterviewComplete"],
+  required: ["score","followup", "nextQuestion","topic","target", "isInterviewComplete"],
 };
 function makeShort(history) {
   if (history.length >= 2) {
@@ -81,94 +112,106 @@ function makeShort(history) {
   }
   return history;
 }
-
+ 
+ 
 async function target(interviewId) {
-  const data = await prisma.interviewResponse.findMany({
-    where: {
-      interviewId,
-    }, select: {
-      target: true,
-      topic: true,
-      answer: true,
+   const data = await prisma.interviewResponse.findMany({
+     where: {
+       interviewId,
+     }, select: {
+       target: true,
+       topic: true,
+       answer: true,
     }
-  })
+   })
   let cntMain = 0, cntFollowup = 0, topics = [];
-  for (const key in data) {
-    if (data[key].answer === null) continue;
-    if (data[key].target === "main") cntMain++;
-    else if (data[key].target === "followup") cntFollowup++;
-    topics.push({ [data[key].topic]: data[key].target });
-  }
+   for (const key in data) {
+     if (data[key].answer === null) continue;
+     if (data[key].target === "main") cntMain++;
+     else if (data[key].target === "followup") cntFollowup++;
+     topics.push({ [data[key].topic]: data[key].target });
+   }
   let cntmain = 0;
-  let cntfollow = 0;
-  for (let i = 0; i < topics.length; i++) {
-    for (const key in topics[i]) {
-      if (topics[i][key] === "main") cntmain++;
-    }
-    if (cntmain === 5) {
-      for (let j = i; j < topics.length; j++) {
-        for (const key in topics[j]) {
-          if (topics[j][key] === "followup") cntfollow++;
-        }
-      }
-      break;
-    }
-  }
+   let cntfollow = 0;
+   for (let i = 0; i < topics.length; i++) {
+     for (const key in topics[i]) {
+       if (topics[i][key] === "main") cntmain++;
+     }
+     if (cntmain === 5) {
+       for (let j = i; j < topics.length; j++) {
+         for (const key in topics[j]) {
+           if (topics[j][key] === "followup") cntfollow++;
+         }
+       }
+       break;
+     }
+   }
 
-  return {
-    mainQuestions: Number(cntMain),
-    followupQuestions: Number(cntFollowup),
+   return {
+     mainQuestions: Number(cntMain),
+     followupQuestions: Number(cntFollowup),
     topics: topics,
-    mainLast: cntmain,
-    followupLast: cntfollow
-  }
-}
-
-export async function first(id, history, preDefined, type, level, company) {
+     mainLast: cntmain,
+     followupLast: cntfollow
+   }
+ }
+ 
+ 
+ 
+ 
+ 
+export async function first(id,history, preDefined, type, level, company) {
   const myPayload = {
-    mainQuestions: 0,
-    followupQuestions: 0,
-    topics: null
+    mainQuestions:0,
+    followupQuestions:0,
+    topics:null
   }
-  const response = await rotate().models.generateContent(aiConfig(makeShort(history), preDefined, type, level, company, myPayload));
-
+  const chat = rotate().chats.create(aiConfig(makeShort(history), type, level, company,myPayload));
+ 
   try {
-    return JSON.parse(response.text);
+    let sendMsg = await chat.sendMessage({ message: preDefined });
+ 
+    return JSON.parse(sendMsg.text);
   }
   catch (err) {
-    console.error("first() Gemini call or JSON parse error:", err);
-    throw err; 
+    console.error("first() failed — Gemini call or JSON parse error:", err);
+    throw err; // don't hide it, let the controller's catch report a proper error
   }
 }
-
-
-export async function runNow(id, history, userResponse, type, level, company) {
-
+ 
+ 
+export async function runNow(id,history, userResponse, type, level, company) {
+ 
   const myPayload = await target(id)
-  if (myPayload.mainQuestions >= 5 && myPayload.followupLast >= 4) {
+  if (myPayload.mainQuestions >= 5 && myPayload.followupQuestions>=25) {
     return {
-      score: 0,
-      followup: null,
-      topic: null,
-      target: null,
-      nextQuestion: "Thank you for interviewing with us. The interview is now complete.",
-      isInterviewComplete: true
+        score: 0,
+        followup: null,
+        topic: null,
+        target: null,
+        nextQuestion: "Thank you for interviewing with us. The interview is now complete.",
+        isInterviewComplete: true
     }
   }
-
+ 
   try {
     const shortHist = makeShort(history);
-    const response = await rotate().models.generateContent(aiConfig(shortHist, userResponse, type, level, company, myPayload));
-    console.log(JSON.parse(response.text))
-    return JSON.parse(response.text);
-
+    const chat = rotate().chats.create(aiConfig(shortHist, type, level, company,myPayload));
+    let sendMsg = await chat.sendMessage({ message: userResponse });
+    console.log(JSON.parse(sendMsg.text))
+    let response = JSON.parse(sendMsg.text);
+    
+    //very importane edge case
+    
+    return response;
+ 
   } catch (error) {
     console.error("Execution Error:", error);
     return {
       score: 0,
       followup: null,
-      topic: null,
-      target: null,
+      topic:null,
+      target:null,
       nextQuestion: null,
       isInterviewComplete: true
     }

@@ -1,6 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import config, { prisma } from "../config/config.js";
 import {findFromDb} from "./02.userDb.service.js";
+import { rotate3 } from "../utilities/keyRotation.js"
 
 const ai = new GoogleGenAI({ apiKey: config.resume_ats });
 const gemini_response = {
@@ -47,7 +48,7 @@ const gemini_response = {
 };
 
 async function analysis(payload) {
-    const chat = ai.chats.create(
+    const chat = rotate3().chats.create(
         {
             model: "gemini-2.5-flash",
             history:payload,
