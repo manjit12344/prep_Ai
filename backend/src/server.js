@@ -43,7 +43,7 @@ app.use("/api/preInterview",pre);
 app.use("/hist",history);
 app.use("/resume",resume);
 
-if(process.env.NODE_ENV==="production"){
+if(process.env.NODE_ENV === "production"){
   //serve our react app
   app.use(express.static(path.join(__dirname,"/frontend/dist")));
   app.use((req,res)=>{
