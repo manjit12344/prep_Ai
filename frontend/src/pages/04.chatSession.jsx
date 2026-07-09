@@ -31,6 +31,7 @@ const ChatSession = () => {
   }, []);
 
   useEffect(() => {
+    reset();
     if (nId) {
       myChatHistory(nId);
     }

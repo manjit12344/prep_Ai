@@ -5,7 +5,7 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-const base_url = import.meta.env.MODE === "development" ? "http://localhost:3000" :"https://prepai-production-36c8.up.railway.app"
+const base_url ="http://localhost:3000" // import.meta.env.MODE === "development" ? "http://localhost:3000" :"https://prepai-production-36c8.up.railway.app"
 
 export const userChat = create((set, get) => ({
     preReq: {},
@@ -14,7 +14,7 @@ export const userChat = create((set, get) => ({
     error: null,
 
     preInt: async ( type, level, company) => {
-        set({ loading: true });
+        set({ loading: true,aiResponse:{},error:null });
         try {
             const response = await axios.post(`${base_url}/api/preInterview/`, {
                 type, level, company
@@ -42,5 +42,7 @@ export const userChat = create((set, get) => ({
         catch (error) {
             set({ error: error.message, loading: false });
         }
-    }
+    },
+
+    reset: () => set({ aiResponse: {}, preReq: {}, error: null })
 }))
