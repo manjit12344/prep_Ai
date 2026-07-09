@@ -11,7 +11,7 @@ import ChatInputArea from "../components/chatSession/ChatInputArea";
 
 const ChatSession = () => {
   const { know, knowMe } = userAuth();
-  const { aiResponse, running, loading } = userChat();
+  const { aiResponse, running, loading,reset } = userChat();
   const { chat, myChatHistory } = useHistory();
 
   const { id } = useParams();
