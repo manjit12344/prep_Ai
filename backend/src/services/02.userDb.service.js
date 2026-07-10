@@ -36,8 +36,7 @@ export async function handelFirst(id,aiChat){
 
 export async function findFromDb(id){
     const response =  await prisma.interviewResponse.findMany({
-        where:{interviewId:id,
-            question:{not:null}
+        where:{interviewId:id
         },
         orderBy:{
             id:'asc'

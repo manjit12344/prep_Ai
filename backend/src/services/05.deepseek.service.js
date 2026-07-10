@@ -86,6 +86,6 @@ export async function main(url) {
   }
   catch (err) {
     console.error("first() failed — Gemini call or JSON parse error:", err);
-    throw err; // don't hide it, let the controller's catch report a proper error
+    main(url) // don't hide it, let the controller's catch report a proper error
   }
 } 

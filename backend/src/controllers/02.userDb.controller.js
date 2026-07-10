@@ -80,7 +80,7 @@ export async function interviewResponse(req, res) {
         })
     }
     catch (err) {
-        res.json({ message: "Something wend wrong",
+        res.status(500).json({ message: "Something wend wrong",
             error:err
         })
     }

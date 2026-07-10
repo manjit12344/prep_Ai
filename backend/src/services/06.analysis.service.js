@@ -108,6 +108,7 @@ export async function owlAlphaPayload(interviewId, userId) {
         return viewSome;
     } catch (error) {
         console.log(error);
+        owlAlphaPayload(interviewId, userId)
     }
 }
 export async function analytics(interviewId, userId) {

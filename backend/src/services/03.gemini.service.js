@@ -7,29 +7,22 @@ function aiConfig(history, type, level, company,payload) {
     model: "gemini-2.5-flash",
     history: history,
     config: {
-      systemInstruction: `You are a realistic ${level}-level ${type} interviewer for ${company}.
+      systemInstruction: `You are a realistic, senior-level interviewer conducting a technical interview for a ${level} ${type} role at ${company}. 
 
-Rules:
-- Ask practical interview questions, not textbook definitions.
-- Be conversational; avoid repeating praise.
-- Evaluate the candidate answer and score 1-10.
-- Strong answers should usually get deeper follow-ups about trade-offs, edge cases, scalability, or "why" decisions.
-- Weak answers should get clarifying follow-ups.
-- Do not repeat completed MAIN topics:
-${JSON.stringify(payload.topics)}
+Your goal is to evaluate the candidate through practical, scenario-based questions, mimicking a real, high-quality interview.
 
-State:
-Main completed: ${payload.mainQuestions}/5
-Followups completed: ${payload.followupQuestions}
+### Current Interview State (Stateless Payload)
+- Main topics completed: ${payload.mainQuestions}/5
+- Current topic follow-ups completed: ${payload.followupQuestions}
+- Historically completed topics (DO NOT REVISIT): ${JSON.stringify(payload.topics)}
 
-Choose:
-- target="followup" when the current topic needs more exploration.
-- target="main" when moving to a new topic.
-
-End naturally after the interview is complete.
-
-Return JSON only.
-      `,
+### Interviewer Behavior Guidelines
+1. **Be Conversational & Authentic:** Do not repeat praise (e.g., avoid "Great answer!", "Excellent point!"). Transition naturally based on their last response.
+2. **Focus on Practicality:** Ask about real-world scenarios, architectural trade-offs, edge cases, scalability, and "why" decisions. Avoid textbook definitions.
+3. **Determine the Next Step (Target):**
+   - **followup**: If the candidate's answer was shallow, incorrect, or highly interesting, dig deeper into the *same* topic (trade-offs, edge cases, or clarifications).
+   - **main**: If the candidate has sufficiently answered the current topic, or if ${payload.followupQuestions} >= 2, transition to a brand-new topic from the remaining interview scope.
+4. **End Condition:** If ${payload.mainQuestions} >= 5, wrap up the interview gracefully, thank the candidate, and set isInterviewComplete to true.`,
  
       responseMimeType: "application/json",
       responseSchema: gemini_response,
@@ -132,17 +125,17 @@ export async function first(id,history, preDefined, type, level, company) {
  
   try {
     let sendMsg = await chat.sendMessage({ message: preDefined });
- 
+  
     return JSON.parse(sendMsg.text);
   }
   catch (err) {
     console.error("first() failed — Gemini call or JSON parse error:", err);
-    throw err; // don't hide it, let the controller's catch report a proper error
+    return first(id,history, preDefined, type, level, company) // don't hide it, let the controller's catch report a proper error
   }
 }
  
  
-export async function runNow(id,history, userResponse, type, level, company) {
+export async function runNow(id,history, userResponse, type, level, company){
  
   const myPayload = await target(id)
   if (myPayload.mainQuestions >= 5 && myPayload.followupQuestions>=25) {
@@ -169,13 +162,6 @@ export async function runNow(id,history, userResponse, type, level, company) {
  
   } catch (error) {
     console.error("Execution Error:", error);
-    return {
-      score: 0,
-      followup: null,
-      topic:null,
-      target:null,
-      nextQuestion: null,
-      isInterviewComplete: false
-    }
+    return runNow(id,history, userResponse, type, level, company);
   }
 }
