@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import config, { prisma } from "../config/config.js"
 
-const base_url = config.nodeEnv === "production"?"https://prepai-production-36c8.up.railway.app":"http://localhost:3000"
+const base_url = config.nodeEnv === "production"?"https://prep-ai-aztu.onrender.com":"http://localhost:3000"
 
 passport.use(
     new GoogleStrategy({
